@@ -1,0 +1,16 @@
+{
+    "traps": {
+        "cloudant-generic": {
+            "trap": "CLOUDANT-PLATFORM-MIB::cloudantGenericTrap",
+            "output": "CLOUDANT-PLATFORM-MIB::cloudantTrapMessage",
+            "handlers": [],
+            "severity": "CRITICAL" 
+        },
+        "cloudant-dbcore-reboot-event": {
+            "trap": "CLOUDANT-DBCORE-MIB::cloudantDbcoreRebootEvent",
+            "output": "DBCore on was rebooted"
+            "handlers": [],
+            "severity": "WARNING"
+        }
+    }
+}

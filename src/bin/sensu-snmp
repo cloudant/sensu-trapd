@@ -1,0 +1,124 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import optparse
+import pwd
+import grp
+import ConfigParser
+import logging
+import simplejson as json
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from sensu.snmp.log import log
+from sensu.snmp.server import Server
+
+if __name__ == "__main__":
+    try:
+        # Initialize Options
+        parser = optparse.OptionParser()
+
+        parser.add_option("-c", "--configfile",
+                          dest="configfile",
+                          default=None,
+                          help="config file")
+
+        parser.add_option("-f", "--foreground",
+                          dest="foreground",
+                          default=False,
+                          action="store_true",
+                          help="run in foreground")
+
+        parser.add_option("-p", "--pidfile",
+                          dest="pidfile",
+                          default=None,
+                          help="pid file")
+
+        parser.add_option("-v", "--version",
+                          dest="version",
+                          default=False,
+                          action="store_true",
+                          help="display the version and exit")
+
+        # Parse Command Line Args
+        (options, args) = parser.parse_args()
+
+        # Load Config
+        if options.configfile is None:
+            print >> sys.stderr, ("ERROR: Must specify a config file")
+            sys.exit(1)
+        fh = open(options.configfile)
+        config = json.load(fh)
+
+        if options.version:
+            print "version %s" % (get_version())
+            sys.exit(0)
+
+        if options.foreground:
+            log.setLevel(logging.DEBUG)
+            formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s')
+            streamhandler = logging.StreamHandler(sys.stdout)
+            streamhandler.setFormatter(formatter)
+            log.addHandler(streamhandler)
+
+    # Pass the exit up stream rather then handle it as an general exception
+    except SystemExit, e:
+        raise SystemExit
+
+    except Exception, e:
+        import traceback
+        sys.stderr.write("Unhandled exception: %s\n" % str(e))
+        sys.stderr.write("traceback: %s" % traceback.format_exc())
+        sys.exit(1)
+
+    try:
+        # PID MANAGEMENT
+        if not options.foreground:
+
+            # Initialize Pid file
+            if not options.pidfile:
+                options.pidfile = str(config.get('server', 'pid_file'))
+
+            # Read existing pid file
+            try:
+                pf = file(options.pidfile, 'r')
+                pid = int(pf.read().strip())
+                pf.close()
+            except IOError:
+                pid = None
+
+            # Check existing pid file
+            if pid:
+                # Check if pid is real
+                if not os.path.exists("/".join(["/proc", str(pid), "cmdline"])):
+                    # Pid is not real
+                    os.unlink(options.pidfile)
+                    pid = None
+                    print >> sys.stderr, ("WARN: Bogus pid file was found. I deleted it.")
+                else:
+                    print >> sys.stderr, ("ERROR: Pidfile exists. Server already running?")
+                    sys.exit(1)
+
+            # Get final GIDs
+            gid = grp.getgrnam(config.get('server','group')).gr_gid
+
+            # Get final UID
+            uid = pwd.getpwnam(config.get('server','user')).pw_uid
+
+            # TODO: Fork
+        else:
+            log.debug("Foreground mode enabled, skipping fork.")
+
+    # Pass the exit up stream rather then handle it as an general exception
+    except SystemExit, e:
+        raise SystemExit
+
+    except Exception, e:
+        import traceback
+        sys.stderr.write("Unhandled exception: %s" % str(e))
+        sys.stderr.write("traceback: %s" % traceback.format_exc())
+        sys.exit(1)
+
+    server = Server(config)
+    server.run()

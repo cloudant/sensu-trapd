@@ -1,0 +1,26 @@
+{
+    "server": {
+        "log_file": "tmp/sensu-snmp.log",
+        "pid_file": "tmp/sensu-snmp.pid",
+        "user":     "nobody",
+        "group":    "nobody"
+    },
+    "snmp": {
+        "listen_address":   "0.0.0.0",
+        "listen_port":      "162",
+        "mib_paths":        ["conf/mibs", 
+                             "conf/mibs/cloudant"],
+        "mibs":             ["CLOUDANT-REG-MIB", 
+                             "CLOUDANT-PLATFORM-MIB",
+                             "CLOUDANT-DBCORE-MIB"],
+        "version2": {
+            "enabled":      true,
+            "community":    "public"
+        },
+        "version3": {
+            "enabled":      true,
+            "users": {
+            }
+        }
+    }
+}
