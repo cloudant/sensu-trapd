@@ -1,5 +1,5 @@
 {
-    "server": {
+    "daemon": {
         "log_file": "tmp/sensu-snmp.log",
         "pid_file": "tmp/sensu-snmp.pid",
         "user":     "nobody",
@@ -8,8 +8,7 @@
     "snmp": {
         "listen_address":   "0.0.0.0",
         "listen_port":      "162",
-        "mib_paths":        ["conf/mibs", 
-                             "conf/mibs/cloudant"],
+        "mib_dir":          "conf/mibs",
         "mibs":             ["CLOUDANT-REG-MIB", 
                              "CLOUDANT-PLATFORM-MIB",
                              "CLOUDANT-DBCORE-MIB"],
@@ -22,5 +21,11 @@
             "users": {
             }
         }
+    },
+    "traps": {
+        "trap_file": "conf/traps.json"
+    },
+    "sensu": {
+
     }
 }

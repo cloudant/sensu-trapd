@@ -1,16 +1,22 @@
 {
-    "traps": {
-        "cloudant-generic": {
-            "trap": "CLOUDANT-PLATFORM-MIB::cloudantGenericTrap",
-            "output": "CLOUDANT-PLATFORM-MIB::cloudantTrapMessage",
-            "handlers": [],
-            "severity": "CRITICAL" 
+    "cloudant-generic": {
+        "trap": "CLOUDANT-PLATFORM-MIB::cloudantGenericTrap",
+        "tokens": {
+            "message": "CLOUDANT-PLATFORM-MIB::cloudantTrapMessage"
         },
-        "cloudant-dbcore-reboot-event": {
-            "trap": "CLOUDANT-DBCORE-MIB::cloudantDbcoreRebootEvent",
-            "output": "DBCore on was rebooted"
-            "handlers": [],
-            "severity": "WARNING"
-        }
+        "output": "$(message)",
+        "handlers": [],
+        "severity": "CRITICAL" 
+    },
+    "cloudant-dbcore-reboot-event": {
+        "trap": "CLOUDANT-DBCORE-MIB::cloudantDbcoreRebootEvent",
+        "output": "DBCore on was rebooted $(hostname)",
+        "handlers": [],
+        "severity": "WARNING"
+    },
+    "default": {
+        "output": "Unknown trap received $(oid)",
+        "handlers": [],
+        "severity": "CRITICAL"
     }
 }

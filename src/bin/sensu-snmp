@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
         if options.foreground:
             log.setLevel(logging.DEBUG)
-            formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s')
+            formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] [%(threadName)s] [%(name)s] %(message)s')
             streamhandler = logging.StreamHandler(sys.stdout)
             streamhandler.setFormatter(formatter)
             log.addHandler(streamhandler)
@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
             # Initialize Pid file
             if not options.pidfile:
-                options.pidfile = str(config.get('server', 'pid_file'))
+                options.pidfile = config['daemon']['pid_file']
 
             # Read existing pid file
             try:
@@ -101,10 +101,10 @@ if __name__ == "__main__":
                     sys.exit(1)
 
             # Get final GIDs
-            gid = grp.getgrnam(config.get('server','group')).gr_gid
+            gid = grp.getgrnam(config['daemon']['group']).gr_gid
 
             # Get final UID
-            uid = pwd.getpwnam(config.get('server','user')).pw_uid
+            uid = pwd.getpwnam(config['daemon']['user']).pw_uid
 
             # TODO: Fork
         else:
