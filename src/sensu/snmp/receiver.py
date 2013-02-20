@@ -29,9 +29,9 @@ class TrapReceiverThread(threading.Thread):
             self._trap_receiver._snmp_engine.transportDispatcher.jobFinished(1) 
 
     def run(self):
-        log.debug("%s started" % (self.name))
+        log.debug("%s: started" % (self.name))
         self._trap_receiver.run()
-        log.debug("%s exiting" % (self.name))
+        log.debug("%s: exiting" % (self.name))
 
 class TrapReceiver(object):
 
@@ -45,14 +45,14 @@ class TrapReceiver(object):
 
         # Create SNMP engine with autogenernated engineID and pre-bound to socket transport dispatcher
         self._snmp_engine = pysnmp.entity.engine.SnmpEngine()
-        log.debug("Initialized SNMP Engine")
+        log.debug("TrapReceiver: Initialized SNMP Engine")
 
         # Configure transport UDP over IPv4
         self._snmp_listen_address = config['snmp']['listen_address']
         self._snmp_listen_port = int(config['snmp']['listen_port'])
         pysnmp.entity.config.addSocketTransport(self._snmp_engine, udp.domainName,
             udp.UdpTransport().openServerMode((self._snmp_listen_address, self._snmp_listen_port)))
-        log.debug("Initialized SNMP Transport: %s:%s" % (self._snmp_listen_address, self._snmp_listen_port))
+        log.debug("TrapReceiver: Initialized SNMP Transport on %s:%s" % (self._snmp_listen_address, self._snmp_listen_port))
 
         # Configure SNMPv2 if enabled
         if bool(self._config['snmp']['version2']['enabled']):
@@ -66,12 +66,12 @@ class TrapReceiver(object):
         # Configure SNMP Mibs
         self._configure_mibs(self._config['snmp']['mib_dir'], self._config['snmp']['mibs'])
 
-        log.debug("Initialized TrapReceiver")
+        log.debug("TrapReceiver: Initialized")
 
     def _configure_snmp_v2(self, community):
         # v1/2 setup
         pysnmp.entity.config.addV1System(self._snmp_engine, 'sensu-snmp-agent', community)
-        log.debug("Initialized SNMPv1 Auth")
+        log.debug("TrapReceiver: Initialized SNMPv1 Auth")
 
     def _configure_snmp_v3(self, authkey, privkey):
         # SNMPv3/USM setup
@@ -80,22 +80,21 @@ class TrapReceiver(object):
             self._snmp_engine, 'usr-md5-des',
             pysnmp.entity.config.usmHMACMD5AuthProtocol, authkey,
             pysnmp.entity.config.usmDESPrivProtocol, privkey)
-        log.debug("Initialized SNMPv3 Auth")
+        log.debug("TrapReceiver: Initialized SNMPv3 Auth")
 
     def _configure_mibs(self, mib_dir, mib_list):
         self._snmp_mib_builder = pysnmp.smi.builder.MibBuilder()
-        self._snmp_mib_builder.importSymbols("MibScalar")
 
         # Configure MIB paths
         self._snmp_mib_sources = self._snmp_mib_builder.getMibSources()
         for path in self.DEFAULT_MIB_DIRS + [mib_dir]:
             self._snmp_mib_sources += (pysnmp.smi.builder.DirMibSource(path),)
-            log.debug("Added MIB source: %s" % path)
+            log.debug("TrapReceiver: Added MIB source: %s" % path)
         self._snmp_mib_builder.setMibSources(*self._snmp_mib_sources)
 
         for mib in mib_list + self.DEFAULT_MIB_LIST:
             self._snmp_mib_builder.loadModules(mib, )
-            log.debug("Loaded MIB: %s" % mib)
+            log.debug("TrapReceiver: Loaded MIB: %s" % mib)
         self._snmp_mib_view = pysnmp.smi.view.MibViewController(self._snmp_mib_builder)
 
     def _create_trap(self, trap_oid, trap_name, trap_source, trap_arguments, trap_properties=None):
@@ -124,7 +123,7 @@ class TrapReceiver(object):
         try:
             # get the source address for this notification
             transportDomain, trap_source = snmp_engine.msgAndPduDsp.getTransportInfo(stateReference)
-            log.debug("Notification received from %s" % (trap_source[0]))
+            log.debug("TrapReceiver: Notification received from %s" % (trap_source[0]))
 
             # read all the varBinds
             for oid, val in varBinds:

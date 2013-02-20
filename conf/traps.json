@@ -1,22 +1,29 @@
 {
-    "cloudant-generic": {
+    "cloudant-generic-trap-handler": {
         "trap": "CLOUDANT-PLATFORM-MIB::cloudantGenericTrap",
+        "name": "{hostname} Cloudant Generic Event",
         "arguments": {
             "CLOUDANT-PLATFORM-MIB::cloudantTrapMessage": "message"
         },
         "output": "{message}",
-        "handlers": [],
-        "severity": "CRITICAL" 
+        "handlers": ["debug"],
+        "severity": 2
     },
-    "cloudant-dbcore-reboot-event": {
+    "cloudant-dbcore-reboot-event-event": {
         "trap": "CLOUDANT-DBCORE-MIB::cloudantDbcoreRebootEvent",
-        "output": "DBCore on %(hostname)s was rebooted",
-        "handlers": [],
-        "severity": "WARNING"
-    },
-    "default": {
-        "output": "Unknown trap received $(oid)",
-        "handlers": [],
-        "severity": "CRITICAL"
+        "name": "{hostname} DBCore Reboot Event",
+        "output": "DBCore on {hostname} was rebooted",
+        "handlers": ["debug"],
+        "severity": 1
+    }, 
+    "cloudant-loadbalancer-server-up-event": {
+        "trap": "CLOUDANT-LOADBALANCER-MIB::cloudantLoadBalancerServerDown",
+        "arguments": {
+            "CLOUDANT-PLATFORM-MIB::cloudantTrapMessage": "message"
+        },
+        "name": "{hostname} Server DOWN Event",
+        "output": "{message}",
+        "handlers": ["debug"],
+        "severity": 1
     }
 }

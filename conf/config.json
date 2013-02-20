@@ -1,19 +1,20 @@
 {
     "daemon": {
         "log_file":     "tmp/sensu-snmp.log",
+        "log_level":    "INFO",
         "pid_file":     "tmp/sensu-snmp.pid",
         "user":         "nobody",
         "group":        "nobody",
         "trap_file":    "conf/traps.json"
     },
     "dispatcher": {
-        "host":     "localhost",
-        "port":     "3030",
-        "timeout":  "30"
+        "host":         "localhost",
+        "port":         3030,
+        "timeout":      30
     },
     "snmp": {
         "listen_address":   "0.0.0.0",
-        "listen_port":      "162",
+        "listen_port":      162,
         "mib_dir":          "conf/mibs",
         "mibs":             ["CLOUDANT-REG-MIB", 
                              "CLOUDANT-PLATFORM-MIB",

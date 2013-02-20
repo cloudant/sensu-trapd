@@ -19,7 +19,7 @@ class TrapEventDispatcherThread(threading.Thread):
 
     def dispatch(self, event):
         self._events.append(event)
-        log.debug("Event enqueue %s" % (event))
+        log.debug("TrapEventDispatcherThread: event enqueue: %s" % (event))
         return True
 
     def stop(self):
@@ -27,7 +27,7 @@ class TrapEventDispatcherThread(threading.Thread):
         self._trap_event_dispatcher._close()
 
     def run(self):
-        log.debug("%s started" % (self.name))
+        log.debug("%s: started" % (self.name))
         self._run = True
         while self._run:
             while True:
@@ -42,7 +42,7 @@ class TrapEventDispatcherThread(threading.Thread):
                     # Nothing in queue
                     break 
             time.sleep(1)
-        log.debug("%s exiting" % (self.name))
+        log.debug("%s: exiting" % (self.name))
 
 class TrapEventDispatcher(object):
     def __init__(self, config):
@@ -52,15 +52,15 @@ class TrapEventDispatcher(object):
         self._socket_timeout = int(self._config['dispatcher']['timeout'])
         self._socket = None
         self._connect()
-        log.debug("Initialized TrapEventDispatcher")
+        log.debug("TrapEventDispatcher: Initialized")
 
     def _connect(self):
-        log.debug("TrapEventDispatcher connecting to %s:%d" % (self._remote_host, self._remote_port))
+        log.debug("TrapEventDispatcher: Connecting to %s:%d" % (self._remote_host, self._remote_port))
         # create socket
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         if self._socket is None:
             # log Error
-            log.error("TrapEventDispatcher: unable to create socket")
+            log.error("TrapEventDispatcher: Unable to create socket")
             # close Socket
             self._close()
             return
@@ -92,7 +92,7 @@ class TrapEventDispatcher(object):
                 self._connect()
             if self._socket is not None:
                 # TODO: send event!
-                log.info("Dispatched event: %s" % (event))
+                log.info("TrapEventDispatcher: Dispatched Event: name:'%s' status:%d" % (event.name, event.status))
                 return True
         except:
             self._close()
