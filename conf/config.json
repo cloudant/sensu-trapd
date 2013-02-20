@@ -1,9 +1,15 @@
 {
     "daemon": {
-        "log_file": "tmp/sensu-snmp.log",
-        "pid_file": "tmp/sensu-snmp.pid",
-        "user":     "nobody",
-        "group":    "nobody"
+        "log_file":     "tmp/sensu-snmp.log",
+        "pid_file":     "tmp/sensu-snmp.pid",
+        "user":         "nobody",
+        "group":        "nobody",
+        "trap_file":    "conf/traps.json"
+    },
+    "dispatcher": {
+        "host":     "localhost",
+        "port":     "3030",
+        "timeout":  "30"
     },
     "snmp": {
         "listen_address":   "0.0.0.0",
@@ -21,11 +27,5 @@
             "users": {
             }
         }
-    },
-    "traps": {
-        "trap_file": "conf/traps.json"
-    },
-    "sensu": {
-
     }
 }

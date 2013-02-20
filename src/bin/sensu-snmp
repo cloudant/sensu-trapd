@@ -7,6 +7,7 @@ import pwd
 import grp
 import ConfigParser
 import logging
+import signal
 import simplejson as json
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -23,6 +24,11 @@ if __name__ == "__main__":
                           dest="configfile",
                           default=None,
                           help="config file")
+
+        parser.add_option("-t", "--trapfile",
+                          dest="trapfile",
+                          default=None,
+                          help="trap file")
 
         parser.add_option("-f", "--foreground",
                           dest="foreground",
@@ -120,5 +126,18 @@ if __name__ == "__main__":
         sys.stderr.write("traceback: %s" % traceback.format_exc())
         sys.exit(1)
 
+    # Initialize Server
     server = Server(config)
+
+    def sigint_handler(signum, frame):
+        # Log
+        log.debug("Signal Received: %d" % (signum))
+        # Stop Server
+        server.stop()
+
+    # Set the signal handlers
+    signal.signal(signal.SIGINT, sigint_handler)
+    signal.signal(signal.SIGTERM, sigint_handler)
+
+    # Run server
     server.run()
