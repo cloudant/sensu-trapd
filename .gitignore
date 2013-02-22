@@ -33,3 +33,7 @@ nosetests.xml
 # venv
 venv
 
+MANIFEST
+build
+dist
+version.txt
