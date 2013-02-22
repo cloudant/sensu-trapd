@@ -1,0 +1,41 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+build:
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -rf build
+	dh_clean install-stamp
+
+install: install-stamp
+
+install-stamp:
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs
+
+	python setup.py install --root=$(CURDIR)/debian/sensu-snmp
+	touch $@
+
+binary-arch:
+
+binary-indep: install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs
+	dh_installdocs
+	#dh_installman pkg-name.1 #assuming that you've got man page for your package ||
+	dh_pysupport
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_lintian
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install

@@ -1,0 +1,14 @@
+Source: sensu-snmp
+Section: misc
+Priority: extra
+Maintainer: Andy Kipp <akipp@cloudant.com>
+Homepage: https://github.com/cloudant/sensu-snmp
+Vcs-Git: git://github.com/cloudant/sensu-snmp.git
+Vcs-Browser: https://github.com/cloudant/sensu-snmp
+Build-Depends: debhelper (>= 7), python (>= 2.6), python-support, python-mock, cdbs
+Standards-Version: 3.9.1
+
+Package: sensu-snmp
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.6), python-configobj
+Description: SNMP Trap Receiver for Sensu

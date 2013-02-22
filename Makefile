@@ -38,7 +38,7 @@ buildrpm: sdist
 deb: builddeb
 
 builddeb: version 
-	dch --newversion $(VERSION) --distribution unstable --force-distribution -b "Last Commit: $(shell git log -1 --pretty=format:'(%ai) %H %cn <%ce>')"
+	dch --newversion $(VERSION) --controlmaint --distribution precise -b "Last Commit: $(shell git log -1 --pretty=format:'(%ai) %H %cn <%ce>')"
 	dch --release  "new upstream"
 	./setup.py sdist --prune
 	mkdir -p build
