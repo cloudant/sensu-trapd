@@ -1,4 +1,7 @@
+argparse==1.2.1
+distribute==0.6.24
 pyasn1==0.1.6
 pycrypto==2.6
 pysnmp==4.2.4
+simplejson==3.1.0
 wsgiref==0.1.2

@@ -17,7 +17,7 @@ install-stamp:
 	dh_prep
 	dh_installdirs
 
-	python setup.py install --root=$(CURDIR)/debian/sensu-snmp
+	python setup.py install --no-compile --root=$(CURDIR)/debian/sensu-snmp
 	touch $@
 
 binary-arch:
@@ -27,10 +27,10 @@ binary-indep: install
 	dh_testroot
 	dh_installchangelogs
 	dh_installdocs
-	#dh_installman pkg-name.1 #assuming that you've got man page for your package ||
 	dh_pysupport
 	dh_compress
 	dh_fixperms
+	dh_installinit
 	dh_installdeb
 	dh_gencontrol
 	dh_md5sums

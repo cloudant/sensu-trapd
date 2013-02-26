@@ -11,6 +11,7 @@ import signal
 import simplejson as json
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../lib')))
 
 from sensu.snmp.log import log
 from sensu.snmp.server import SensuSNMPServer

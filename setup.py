@@ -2,7 +2,13 @@
 # coding=utf-8
 import os
 import sys
+import platform
 from distutils.core import setup
+
+distro = platform.dist()[0]
+
+# Configure Data Files
+data_files = []
 
 def get_version():
     """ 
@@ -31,8 +37,8 @@ setup(
     description='SNMP Trap Receiver for Sensu',
     package_dir={'': 'src'},
     packages=['sensu', 'sensu.snmp'],
-    scripts=['src/bin/sensu-snmp']
-    #data_files=data_files,
+    scripts=['src/bin/sensu-snmp'],
+    data_files=data_files,
     #install_requires=install_requires,
     #test_suite='test.main',
 )
