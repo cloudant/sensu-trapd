@@ -1,10 +1,10 @@
 {
     "daemon": {
-        "log_file":     "tmp/sensu-snmp.log",
-        "log_level":    "INFO",
-        "pid_file":     "tmp/sensu-snmp.pid",
+        "log_file":     "sensu-snmp.log",
+        "log_level":    "DEBUG",
+        "pid_file":     "sensu-snmp.pid",
         "user":         "nobody",
-        "group":        "nobody",
+        "group":        "nogroup",
         "trap_file":    "conf/traps.json"
     },
     "dispatcher": {
@@ -14,7 +14,7 @@
     },
     "snmp": {
         "listen_address":   "0.0.0.0",
-        "listen_port":      162,
+        "listen_port":      1620,
         "mib_dir":          "conf/mibs",
         "mibs":             ["CLOUDANT-REG-MIB", 
                              "CLOUDANT-PLATFORM-MIB",

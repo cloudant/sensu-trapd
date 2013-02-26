@@ -33,6 +33,8 @@ nosetests.xml
 # venv
 venv
 
+sensu-snmp.log
+sensu-snmp.pid
 MANIFEST
 build
 dist

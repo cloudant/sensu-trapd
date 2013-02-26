@@ -26,11 +26,6 @@ if __name__ == "__main__":
                           default=None,
                           help="config file")
 
-        parser.add_option("-t", "--trapfile",
-                          dest="trapfile",
-                          default=None,
-                          help="trap file")
-
         parser.add_option("-f", "--foreground",
                           dest="foreground",
                           default=False,
@@ -58,14 +53,19 @@ if __name__ == "__main__":
         fh = open(options.configfile)
         config = json.load(fh)
 
+        # Display Version
         if options.version:
             print "version %s" % (get_version())
             sys.exit(0)
 
+        # Configure Logging
+        log.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s')
+        filehandler = logging.FileHandler(config['daemon']['log_file'])
+        filehandler.setFormatter(formatter)
+        log.addHandler(filehandler)
+
         if options.foreground:
-            log.setLevel(logging.DEBUG)
-            formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s')
-            #formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] [%(threadName)s] [%(name)s] %(message)s')
             streamhandler = logging.StreamHandler(sys.stdout)
             streamhandler.setFormatter(formatter)
             log.addHandler(streamhandler)
@@ -83,7 +83,6 @@ if __name__ == "__main__":
     try:
         # PID MANAGEMENT
         if not options.foreground:
-
             # Initialize Pid file
             if not options.pidfile:
                 options.pidfile = config['daemon']['pid_file']
@@ -114,7 +113,88 @@ if __name__ == "__main__":
             # Get final UID
             uid = pwd.getpwnam(config['daemon']['user']).pw_uid
 
-            # TODO: Fork
+            # Fix up pid permissions
+            if not options.foreground:
+                # Write pid file
+                pid = str(os.getpid())
+                try:
+                    pf = file(options.pidfile, 'w+')
+                except IOError, e:
+                    print >> sys.stderr, "Failed to write PID file: %s" % (e)
+                    sys.exit(1)
+                pf.write("%s\n" % pid)
+                pf.close()
+                os.chown(options.pidfile, uid, gid)
+                # Log
+                log.debug("Wrote First PID file: %s" % (options.pidfile))
+
+            # Switch user to specified user/group if required
+            try:
+                if gid != -1 and os.getgid() != gid:
+                    # Set GID
+                    os.setgid(gid)
+
+                if uid != -1 and os.getuid() != uid:
+                    # Set UID
+                    os.setuid(uid)
+            except Exception, e:
+                print >> sys.stderr, "ERROR: Failed to set UID/GID. %s" % (e)
+                sys.exit(1)
+
+            # Log
+            log.info('Changed UID: %d (%s) GID: %d (%s).' % (
+                os.getuid(),
+                config['daemon']['user'],
+                os.getgid(),
+                config['daemon']['group']))
+
+            # Double fork to serverize process
+            log.info('Detaching Process.')
+
+            # Fork 1
+            try:
+                pid = os.fork()
+                if pid > 0:
+                    # Exit first paren
+                    sys.exit(0)
+            except OSError, e:
+                print >> sys.stderr, "Failed to fork process." % (e)
+                sys.exit(1)
+            # Decouple from parent environmen
+            os.setsid()
+            os.umask(0)
+            # Fork 2
+            try:
+                pid = os.fork()
+                if pid > 0:
+                    # Exit second paren
+                    sys.exit(0)
+            except OSError, e:
+                print >> sys.stderr, "Failed to fork process." % (e)
+                sys.exit(1)
+
+            # Close file descriptors so that we can detach
+            sys.stdout.close()
+            sys.stderr.close()
+            sys.stdin.close()
+            os.close(0)
+            os.close(1)
+            os.close(2)
+
+            # Finish Initialize PID file
+            if not options.foreground:
+                # Write pid file
+                pid = str(os.getpid())
+                try:
+                    pf = file(options.pidfile, 'w+')
+                except IOError, e:
+                    log.error("Failed to write child PID file: %s" % (e))
+                    sys.exit(1)
+                pf.write("%s\n" % pid)
+                pf.close()
+                # Log
+                log.debug("Wrote child PID file: %s" % (options.pidfile))
+
         else:
             log.debug("Foreground mode enabled, skipping fork.")
 
