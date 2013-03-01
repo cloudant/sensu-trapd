@@ -36,7 +36,7 @@ class TrapReceiverThread(threading.Thread):
 class TrapReceiver(object):
 
     DEFAULT_MIB_DIRS = []
-    DEFAULT_MIB_LIST = ['SNMPv2-MIB']
+    DEFAULT_MIB_LIST = ['SNMPv2-MIB', 'SNMP-COMMUNITY-MIB']
 
     def __init__(self, config, callback):
 
