@@ -11,4 +11,6 @@ Standards-Version: 3.9.1
 Package: sensu-trapd
 Architecture: all
 Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.6)
+Provides: sensu-snmp
+Replaces: sensu-snmp
 Description: SNMP Trap Receiver for Sensu

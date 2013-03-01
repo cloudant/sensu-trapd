@@ -12,7 +12,7 @@
         "port":         3030,
         "timeout":      30,
         "backoff":      60,
-        "event_log":    "/var/log/sensu/sensu-trapd-events.log"
+        "events_log":    "/var/log/sensu/sensu-trapd-events.log"
     },
     "mibs": {
         "paths": ["/opt/sensu-trapd/conf/mibs"],
