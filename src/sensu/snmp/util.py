@@ -1,7 +1,7 @@
 import socket
 
 from sensu.snmp.log import log
-
+from sensu.snmp.event import TrapEvent
 
 def get_hostname_from_address(addr):
     try:
@@ -14,3 +14,10 @@ def get_hostname_from_address(addr):
             pass
     except socket.herror:
         return addr, addr
+
+def parse_event_severity(event_severity):
+    try:
+        severity = int(event_severity)
+        assert(severity in TrapEvent.EVENT_SEVERITY.values())
+    except ValueError:
+        return TrapEvent.EVENT_SEVERITY[event_severity]

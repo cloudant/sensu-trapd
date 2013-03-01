@@ -1,3 +1,3 @@
 import logging
 
-log = logging.getLogger('sensu-snmp')
+log = logging.getLogger('sensu-trapd')

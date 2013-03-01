@@ -19,7 +19,7 @@ class TrapEventDispatcherThread(threading.Thread):
 
     def dispatch(self, event):
         self._events.append(event)
-        log.debug("TrapEventDispatcherThread: event enqueue: %s" % (event))
+        log.debug("TrapEventDispatcherThread: Enqueued Event: %r" % (event))
         return True
 
     def stop(self):
@@ -27,7 +27,7 @@ class TrapEventDispatcherThread(threading.Thread):
         self._trap_event_dispatcher._close()
 
     def run(self):
-        log.debug("%s: started" % (self.name))
+        log.debug("%s: Started" % (self.name))
         self._run = True
         while self._run:
             while True:
@@ -42,7 +42,7 @@ class TrapEventDispatcherThread(threading.Thread):
                     # Nothing in queue
                     break 
             time.sleep(1)
-        log.debug("%s: exiting" % (self.name))
+        log.debug("%s: Exiting" % (self.name))
 
 class TrapEventDispatcher(object):
     def __init__(self, config):
@@ -92,7 +92,7 @@ class TrapEventDispatcher(object):
                 self._connect()
             if self._socket is not None:
                 # TODO: send event!
-                log.info("TrapEventDispatcher: Dispatched Event: name:'%s' status:%d" % (event.name, event.status))
+                log.info("TrapEventDispatcher: Dispatched Event: %r" % (event))
                 return True
         except:
             self._close()

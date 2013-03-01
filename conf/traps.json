@@ -1,29 +1,38 @@
 {
-    "cloudant-generic-trap-handler": {
-        "trap": "CLOUDANT-PLATFORM-MIB::cloudantGenericTrap",
-        "name": "{hostname} Cloudant Generic Event",
-        "arguments": {
-            "CLOUDANT-PLATFORM-MIB::cloudantTrapMessage": "message"
+    "cloudant-generic-trap-handler-noargs": {
+        "trap": {
+            "type": ["CLOUDANT-PLATFORM-MIB", "cloudantGenericTrap"]
         },
-        "output": "{message}",
-        "handlers": ["debug"],
-        "severity": 2
+        "event": {
+            "name": "{hostname} Cloudant Generic Event",
+            "output": "{oid}",
+            "handlers": ["debug"],
+            "severity": "CRITICAL"
+        }
     },
-    "cloudant-dbcore-reboot-event-event": {
-        "trap": "CLOUDANT-DBCORE-MIB::cloudantDbcoreRebootEvent",
-        "name": "{hostname} DBCore Reboot Event",
-        "output": "DBCore on {hostname} was rebooted",
-        "handlers": ["debug"],
-        "severity": 1
-    }, 
-    "cloudant-loadbalancer-server-up-event": {
-        "trap": "CLOUDANT-LOADBALANCER-MIB::cloudantLoadBalancerServerDown",
-        "arguments": {
-            "CLOUDANT-PLATFORM-MIB::cloudantTrapMessage": "message"
+    "cloudant-generic-trap-handler": {
+        "trap": {
+            "type": ["CLOUDANT-PLATFORM-MIB", "cloudantGenericTrap"],
+            "args": {
+                "message": ["CLOUDANT-PLATFORM-MIB","cloudantTrapMessage"]
+            }
         },
-        "name": "{hostname} Server DOWN Event",
-        "output": "{message}",
-        "handlers": ["debug"],
-        "severity": 1
+        "event": {
+            "name": "{hostname} Cloudant Generic Event",
+            "output": "{message}",
+            "handlers": ["debug"],
+            "severity": "CRITICAL"
+        }
+    },
+    "cloudant-dbcore-reboot-event-handler": {
+        "trap": {
+            "type": ["CLOUDANT-DBCORE-MIB", "cloudantDbcoreRebootEvent"]
+        },
+        "event": {
+            "name": "{hostname} DBCore Reboot Event",
+            "output": "DBCore on {hostname} was rebooted",
+            "handlers": ["debug"],
+            "severity": "CRITICAL" 
+        }
     }
 }

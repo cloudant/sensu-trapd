@@ -1,7 +1,7 @@
 {
     "daemon": {
         "log_file":     "sensu-snmp.log",
-        "log_level":    "DEBUG",
+        "log_level":    "INFO",
         "pid_file":     "sensu-snmp.pid",
         "user":         "nobody",
         "group":        "nogroup",
@@ -12,20 +12,32 @@
         "port":         3030,
         "timeout":      30
     },
+    "mibs": {
+        "paths": ["conf/mibs"],
+        "mibs":  ["CLOUDANT-REG-MIB",
+                  "CLOUDANT-PLATFORM-MIB",
+                  "CLOUDANT-DBCORE-MIB"]
+    },
     "snmp": {
-        "listen_address":   "0.0.0.0",
-        "listen_port":      1620,
-        "mib_dir":          "conf/mibs",
-        "mibs":             ["CLOUDANT-REG-MIB", 
-                             "CLOUDANT-PLATFORM-MIB",
-                             "CLOUDANT-DBCORE-MIB"],
-        "version2": {
-            "enabled":      true,
-            "community":    "public"
+        "transport": {
+            "listen_address":   "0.0.0.0",
+            "listen_port":      1620,
+            "udp": {
+                "enabled": true
+            },
+            "tcp": {
+                "enabled": true
+            }
         },
-        "version3": {
-            "enabled":      true,
-            "users": {
+        "auth": {
+            "version2": {
+                "enabled":      true,
+                "community":    "public"
+            },
+            "version3": {
+                "enabled":      true,
+                "users": {
+                }
             }
         }
     }
