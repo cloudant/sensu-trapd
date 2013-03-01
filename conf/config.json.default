@@ -1,7 +1,7 @@
 {
     "daemon": {
-        "log_file":     "/var/log/sensu-snmp.log",
-        "log_level":    "DEBUG",
+        "log_file":     "/var/log/sensu/sensu-snmp.log",
+        "log_level":    "INFO",
         "pid_file":     "/var/run/sensu-snmp.pid",
         "user":         "nobody",
         "group":        "nogroup",
@@ -12,18 +12,30 @@
         "port":         3030,
         "timeout":      30
     },
+    "mibs": {
+        "paths": ["/opt/sensu-snmp/conf/mibs"],
+        "mibs":  []
+    },
     "snmp": {
-        "listen_address":   "0.0.0.0",
-        "listen_port":      1620,
-        "mib_dir":          "/opt/sensu-snmp/conf/mibs",
-        "mibs":             [],
-        "version2": {
-            "enabled":      true,
-            "community":    "public"
+        "transport": {
+            "listen_address":   "0.0.0.0",
+            "listen_port":      1620,
+            "udp": {
+                "enabled": true
+            },
+            "tcp": {
+                "enabled": true
+            }
         },
-        "version3": {
-            "enabled":      true,
-            "users": {
+        "auth": {
+            "version2": {
+                "enabled":      true,
+                "community":    "public"
+            },
+            "version3": {
+                "enabled":      true,
+                "users": {
+                }
             }
         }
     }
