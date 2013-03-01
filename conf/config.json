@@ -10,7 +10,7 @@
     "dispatcher": {
         "host":         "localhost",
         "port":         3030,
-        "timeout":      30,
+        "timeout":      5,
         "backoff":      60,
         "events_log":   "sensu-trapd-events.log"
     },
