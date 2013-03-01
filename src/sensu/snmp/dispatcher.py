@@ -6,7 +6,7 @@ import time
 from collections import deque
 
 from sensu.snmp.log import log
-from sensu.snmp.log import events_log 
+from sensu.snmp.log import events_log
 
 class TrapEventDispatcherThread(threading.Thread):
 
@@ -19,6 +19,9 @@ class TrapEventDispatcherThread(threading.Thread):
         self._events = deque()
 
     def dispatch(self, event):
+        # Log Event
+        events_log.info(event.to_json())
+        # Enqueue TrapEvent
         self._events.append(event)
         log.debug("TrapEventDispatcherThread: Enqueued Event: %r" % (event))
         return True
@@ -70,6 +73,7 @@ class TrapEventDispatcher(object):
 
         # set socket timeout
         self._socket.settimeout(self._socket_timeout)
+
         # connect to graphite server
         try:
             self._socket.connect((self._remote_host, self._remote_port))
@@ -93,12 +97,34 @@ class TrapEventDispatcher(object):
             if self._socket is None:
                 log.debug("TrapEventDispatcher: Socket is not connected. Reconnecting")
                 self._connect()
+
+                # back off
                 time.sleep(self._config['dispatcher']['backoff'])
+
             if self._socket is not None:
+                # Send event
+                self._socket.sendall(event.to_json())
+
+                # Receive event confirmation
+                self._socket.setblocking(0)
+                timer = int(time.time())
+                data = ""
+                while (int(time.time()) - timer) < self._socket_timeout:
+                    try:
+                        data = self._socket.recv(512)
+                        break
+                    except socket.error, e:
+                        pass
+                self._socket.setblocking(1)
+                if len(data) <= 0 or data.strip() != "ok":
+                    log.error("TrapEventDispatcher: Error dispatching event. Response was: %s" % (data))
+                    return False
+
                 # TODO: send event!
-                log.info("TrapEventDispatcher: Dispatched Event: %r" % (event))
-                events_log.info(event.to_json())
+                log.info("TrapEventDispatcher: Dispatched TrapEvent: %r" % (event))
+
                 return True
+
         except:
             self._close()
             log.exception("TrapEventDispatcher: Error dispatching event")
