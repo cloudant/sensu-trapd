@@ -1,2 +1,2 @@
-opt/sensu-snmp/conf
-opt/sensu-snmp/conf/mibs
+opt/sensu-trapd/conf
+opt/sensu-trapd/conf/mibs

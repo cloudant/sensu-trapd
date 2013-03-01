@@ -30,16 +30,16 @@ def get_version():
 version = get_version()
 
 setup(
-    name='sensu-snmp',
+    name='sensu-trapd',
     version=version,
-    url='https://github.com/cloudant/sensu-snmp',
+    url='https://github.com/cloudant/sensu-trapd',
     author='Cloudant Inc.',
     author_email='akipp@cloudant.com',
     license='MIT License',
     description='SNMP Trap Receiver for Sensu',
     package_dir={'': 'src'},
     packages=['sensu', 'sensu.snmp'],
-    scripts=['src/bin/sensu-snmp'],
+    scripts=['src/bin/sensu-trapd'],
     data_files=data_files,
     #install_requires=install_requires,
     #test_suite='test.main',

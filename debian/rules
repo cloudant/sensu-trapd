@@ -17,7 +17,7 @@ install-stamp:
 	dh_prep
 	dh_installdirs
 
-	python setup.py install --no-compile --root=$(CURDIR)/debian/sensu-snmp
+	python setup.py install --no-compile --root=$(CURDIR)/debian/sensu-trapd
 	touch $@
 
 binary-arch:

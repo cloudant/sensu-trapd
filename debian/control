@@ -1,14 +1,14 @@
-Source: sensu-snmp
+Source: sensu-trapd
 Section: misc
 Priority: extra
 Maintainer: Andy Kipp <akipp@cloudant.com>
-Homepage: https://github.com/cloudant/sensu-snmp
-Vcs-Git: git://github.com/cloudant/sensu-snmp.git
-Vcs-Browser: https://github.com/cloudant/sensu-snmp
+Homepage: https://github.com/cloudant/sensu-trapd
+Vcs-Git: git://github.com/cloudant/sensu-trapd.git
+Vcs-Browser: https://github.com/cloudant/sensu-trapd
 Build-Depends: debhelper (>= 7), python (>= 2.6), python-support, python-mock
 Standards-Version: 3.9.1
 
-Package: sensu-snmp
+Package: sensu-trapd
 Architecture: all
 Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.6)
 Description: SNMP Trap Receiver for Sensu

@@ -1,5 +1,5 @@
 DESTDIR=/
-PROJECT=sensu-snmp
+PROJECT=sensu-trapd
 VERSION :=$(shell bash version.sh )
 RELEASE :=$(shell ls -1 dist/*.noarch.rpm 2>/dev/null | wc -l )
 HASH	:=$(shell git rev-parse HEAD )

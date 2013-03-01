@@ -7,14 +7,16 @@ import pwd
 import grp
 import ConfigParser
 import logging
+import logging.handlers
 import signal
 import simplejson as json
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../lib')))
 
-from sensu.snmp.log import log
-from sensu.snmp.server import SensuSNMPServer
+from sensu.snmp.log import log, configure_log
+from sensu.snmp.log import events_log, configure_events_log
+from sensu.snmp.server import SensuTrapServer
 
 if __name__ == "__main__":
     try:
@@ -37,11 +39,10 @@ if __name__ == "__main__":
                           default=None,
                           help="pid file")
 
-        parser.add_option("-v", "--verbose",
-                          dest="verbose",
-                          action="store_true",
-                          default=False,
-                          help="verbose logging")
+        parser.add_option("-l", "--log-level",
+                          dest="log_level",
+                          default=None,
+                          help="set log level")
 
         parser.add_option("-V", "--version",
                           dest="version",
@@ -64,27 +65,15 @@ if __name__ == "__main__":
             print "version %s" % (get_version())
             sys.exit(0)
 
+        # Configure Log Level
+        if options.log_level:
+            config['daemon']['log_level'] = options.log_level
+
         # Configure Logging
-        formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s')
-        filehandler = logging.FileHandler(config['daemon']['log_file'])
-        filehandler.setFormatter(formatter)
-        log.addHandler(filehandler)
+        configure_log(log, config['daemon']['log_file'], config['daemon']['log_level'], options.foreground)
 
-        # Configure Foreground Logging
-        if options.foreground:
-            streamhandler = logging.StreamHandler(sys.stdout)
-            streamhandler.setFormatter(formatter)
-            log.addHandler(streamhandler)
-
-        # Configure Logging Level
-        if not options.verbose:
-            try:
-                log.setLevel(getattr(logging, config['daemon']['log_level']))
-            except AttributeError:
-                log.warn("Unknown logging level: %s" % (config['daemon']['log_level']))
-                log.setLevel(logging.INFO)
-        else:
-            log.setLevel(logging.DEBUG)
+        # Configure Events Logging
+        configure_events_log(events_log, config['dispatcher']['events_log'])
 
     # Pass the exit up stream rather then handle it as an general exception
     except SystemExit, e:
@@ -224,8 +213,8 @@ if __name__ == "__main__":
         sys.stderr.write("traceback: %s" % traceback.format_exc())
         sys.exit(1)
 
-    # Initialize Server
-    server = SensuSNMPServer(config)
+    # Initialize Sensu Trap Server
+    server = SensuTrapServer(config)
 
     def sigint_handler(signum, frame):
         # Log

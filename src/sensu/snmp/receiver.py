@@ -68,7 +68,7 @@ class TrapReceiver(object):
 
     def _configure_snmp_v2(self, community):
         # v1/2 setup
-        pysnmp.entity.config.addV1System(self._snmp_engine, 'sensu-snmp-agent', community)
+        pysnmp.entity.config.addV1System(self._snmp_engine, 'sensu-trapd-agent', community)
         LOG.debug("TrapReceiver: Initialized SNMPv1 Auth")
 
     def _configure_snmp_v3(self, authkey, privkey):

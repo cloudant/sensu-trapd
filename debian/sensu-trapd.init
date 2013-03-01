@@ -1,6 +1,6 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          sensu-snmp
+# Provides:          sensu-trapd
 # Required-Start:    $network $local_fs $remote_fs
 # Required-Stop:     $network $local_fs $remote_fs
 # Default-Start:     2 3 4 5
@@ -12,13 +12,13 @@
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC=sensu-snmp
-NAME=sensu-snmp
-CONF=/opt/sensu-snmp/conf/config.json
-DAEMON=/opt/sensu-snmp/bin/sensu-snmp
-DAEMON_ARGS="-p /var/run/sensu-snmp.pid -c $CONF"
-PIDFILE=/var/run/sensu-snmp.pid
-SCRIPTNAME=/etc/init.d/sensu-snmp
+DESC=sensu-trapd
+NAME=sensu-trapd
+CONF=/opt/sensu-trapd/conf/config.json
+DAEMON=/opt/sensu-trapd/bin/sensu-trapd
+PIDFILE=/var/run/sensu-trapd.pid
+DAEMON_ARGS="-p $PIDFILE -c $CONF"
+SCRIPTNAME=/etc/init.d/sensu-trapd
 
 # Exit if the package is not installed
 [ -x $DAEMON ] || exit 0
@@ -28,7 +28,7 @@ SCRIPTNAME=/etc/init.d/sensu-snmp
 
 # Checking for a config file in place
 if [  ! -e $CONF ]; then
-   echo "$CONF not found." 
+   echo "$CONF not found."
    exit 2
 fi
 

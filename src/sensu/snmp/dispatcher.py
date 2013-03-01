@@ -6,6 +6,7 @@ import time
 from collections import deque
 
 from sensu.snmp.log import log
+from sensu.snmp.log import events_log 
 
 class TrapEventDispatcherThread(threading.Thread):
 
@@ -51,6 +52,8 @@ class TrapEventDispatcher(object):
         self._remote_port = int(self._config['dispatcher']['port'])
         self._socket_timeout = int(self._config['dispatcher']['timeout'])
         self._socket = None
+
+        # Connect to Sensu
         self._connect()
         log.debug("TrapEventDispatcher: Initialized")
 
@@ -90,9 +93,11 @@ class TrapEventDispatcher(object):
             if self._socket is None:
                 log.debug("TrapEventDispatcher: Socket is not connected. Reconnecting")
                 self._connect()
+                time.sleep(self._config['dispatcher']['backoff'])
             if self._socket is not None:
                 # TODO: send event!
                 log.info("TrapEventDispatcher: Dispatched Event: %r" % (event))
+                events_log.info(event.to_json())
                 return True
         except:
             self._close()

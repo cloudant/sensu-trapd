@@ -1,8 +1,8 @@
 {
     "daemon": {
-        "log_file":     "sensu-snmp.log",
+        "log_file":     "sensu-trapd.log",
         "log_level":    "INFO",
-        "pid_file":     "sensu-snmp.pid",
+        "pid_file":     "sensu-trapd.pid",
         "user":         "nobody",
         "group":        "nogroup",
         "trap_file":    "conf/traps.json"
@@ -10,7 +10,9 @@
     "dispatcher": {
         "host":         "localhost",
         "port":         3030,
-        "timeout":      30
+        "timeout":      30,
+        "backoff":      60,
+        "events_log":   "sensu-trapd-events.log"
     },
     "mibs": {
         "paths": ["conf/mibs"],

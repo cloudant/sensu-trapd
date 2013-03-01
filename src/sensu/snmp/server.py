@@ -1,5 +1,3 @@
-import os
-import sys
 import time
 import simplejson as json
 
@@ -10,7 +8,7 @@ from sensu.snmp.receiver import TrapReceiverThread
 from sensu.snmp.dispatcher import TrapEventDispatcherThread
 from sensu.snmp.util import *
 
-class SensuSNMPServer(object):
+class SensuTrapServer(object):
 
     def __init__(self, config):
         self._config = config
@@ -26,16 +24,16 @@ class SensuSNMPServer(object):
         self._trap_event_dispatcher_thread = TrapEventDispatcherThread(self._config)
 
         # Configure Trap Handlers
-        self._trap_handlers = self._configure_trap_handlers(self._config['daemon']['trap_file'])
+        self._trap_handlers = self._parse_trap_handlers(self._config['daemon']['trap_file'])
 
-        LOG.debug("SensuSNMPServer: Initialized")
+        LOG.debug("SensuTrapServer: Initialized")
 
     def _configure_mibs(self):
         self._mibs = MibResolver(self._config['mibs']['paths'], self._config['mibs']['mibs'])
 
-    def _configure_trap_handlers(self, trap_file):
+    def _parse_trap_handlers(self, trap_file):
         # TODO: Support multiple trap files
-        LOG.debug("SesnuSNMPServer: Parsing trap handler file: %s" % (trap_file))
+        LOG.debug("SensuTrapServer: Parsing trap handler file: %s" % (trap_file))
         trap_handlers = dict()
         try:
             fh = open(trap_file, 'r')
@@ -44,13 +42,12 @@ class SensuSNMPServer(object):
                 # Load TrapHandler
                 trap_handler = self._load_trap_handler(trap_handler_id, trap_handler_config)
                 trap_handlers[trap_handler_id] = trap_handler
-                LOG.debug("SensuSNMPServer: Parsed trap handler: %s" % (trap_handler_id))
+                LOG.debug("SensuTrapServer: Parsed trap handler: %s" % (trap_handler_id))
         finally:
             fh.close()
         return trap_handlers
 
     def _load_trap_handler(self, trap_handler_id, trap_handler_config):
-
         # Parse trap type
         trap_type_module, trap_type_symbol = tuple(trap_handler_config['trap']['type'])
         # TODO: handle OIDs as trap types
@@ -95,18 +92,17 @@ class SensuSNMPServer(object):
         self._trap_event_dispatcher_thread.dispatch(trap_event)
 
     def _handle_trap(self, trap):
-        LOG.info("SensuSNMPServer: Received Trap: %s" % (trap))
+        LOG.info("SensuTrapServer: Received Trap: %s" % (trap))
 
         # Find TrapHandler for this Trap 
         trap_handler = None
         for trap_handler_id, th in self._trap_handlers.items():
             if th.handles(trap):
                 # Transform Trap
-                event = th.transform(trap)
+                trap_event = th.transform(trap)
                 # Dispatch TrapEvent
-                self._dispatch_trap_event(event)
+                self._dispatch_trap_event(trap_event)
                 return
-
         LOG.warning("No trap handler found for %r" % (trap))
 
     def stop(self):
@@ -121,7 +117,7 @@ class SensuSNMPServer(object):
         self._trap_event_dispatcher_thread.stop()
 
     def run(self):
-        LOG.debug("SensuSNMPServer: started")
+        LOG.debug("SensuTrapServer: started")
         self._run = True
 
         # Start TrapReceiverThread
@@ -136,4 +132,4 @@ class SensuSNMPServer(object):
         # Wait for our threads to stop
         self._trap_receiver_thread.join()
         self._trap_event_dispatcher_thread.join()
-        LOG.debug("SensuSNMPServer: exiting")
+        LOG.debug("SensuTrapServer: exiting")
