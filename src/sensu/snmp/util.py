@@ -9,9 +9,9 @@ def get_hostname_from_address(addr):
         # parse hostname
         hostname_parts = hostname.split('.')
         if len(hostname_parts) <= 2:
-            return hostname, None 
+            return hostname, ''
         else:
-            pass
+            return hostname_parts[0], '.'.join(hostname_parts[1:])
     except socket.herror:
         return addr, addr
 
