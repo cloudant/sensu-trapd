@@ -8,7 +8,9 @@ from distutils.core import setup
 distro = platform.dist()[0]
 
 # Configure Data Files
-data_files = ['requirements.txt']
+data_files = list()
+data_files.append(('', ['requirements.txt', 'version.txt']))
+data_files.append(('', ['conf/config.json.default', 'conf/traps.json.default']))
 
 def get_version():
     """ 
