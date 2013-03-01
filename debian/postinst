@@ -36,8 +36,16 @@ esac
 
 #DEBHELPER#
 
-# Log / Run directory permissions
-chown -R sensu /opt/sensu-snmp/log/
-chown -R sensu /opt/sensu-snmp/run/
+
+# Setup VirtualENV
+#VIRTAULENV=/opt/sensu-snmp/venv
+#if [ ! -d "$VIRTUALENV" ]; then
+#    virtualenv $VIRTUALENV
+#fi
+#
+#. /opt/sensu-snmp/venv/bin/activate
+#
+# Install Requirements
+#pip install -r /opt/sensu-snmp/share/requirements.txt
 
 exit 0

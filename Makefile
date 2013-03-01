@@ -50,7 +50,7 @@ tar: sdist
 
 clean:
 	./setup.py clean
-	rm -rf dist build MANIFEST .tox *.log
+	rm -rf dist build MANIFEST .tox *.log *.pid
 	find . -name '*.pyc' -delete
 
 version:

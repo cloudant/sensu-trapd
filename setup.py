@@ -8,7 +8,7 @@ from distutils.core import setup
 distro = platform.dist()[0]
 
 # Configure Data Files
-data_files = []
+data_files = ['requirements.txt']
 
 def get_version():
     """ 

@@ -10,5 +10,5 @@ Standards-Version: 3.9.1
 
 Package: sensu-snmp
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.6), python-pysnmp4, python-simplejson
+Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.6), python-pip, python-virtualenv
 Description: SNMP Trap Receiver for Sensu
