@@ -62,6 +62,10 @@ class TrapReceiver(object):
             # TODO: configure SNMPv3 users from config file
             self._configure_snmp_v3(self._config['snmp']['auth']['version3']['users'])
 
+        # configure pysnmp debugging 
+        #from pysnmp import debug
+        #debug.setLogger(debug.Debug('io'))
+
         LOG.debug("TrapReceiver: Initialized")
 
     def _configure_udp_transport(self, listen_address, listen_port):
@@ -110,7 +114,7 @@ class TrapReceiver(object):
         try:
             # get the source address for this notification
             transportDomain, trap_source = snmp_engine.msgAndPduDsp.getTransportInfo(stateReference)
-            LOG.debug("TrapReceiver: Notification received from %s" % (trap_source[0]))
+            LOG.debug("TrapReceiver: Notification received from %s, %s" % (trap_source[0], trap_source[1]))
 
             # read all the varBinds
             for oid, val in varBinds:
@@ -128,6 +132,8 @@ class TrapReceiver(object):
                     # convert value
                     trap_arg_value = self._mibs.lookup_value(module, symbol, val)
                     trap_args[trap_arg_oid] = trap_arg_value
+
+                LOG.debug("TrapReceiver: Trap argument: %s, %s = %s" % (module, symbol, val))
 
             # get trap source info
             trap_source_address,trap_source_port = trap_source

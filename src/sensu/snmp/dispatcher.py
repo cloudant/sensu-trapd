@@ -14,6 +14,7 @@ class TrapEventDispatcherThread(threading.Thread):
         # Initialize threading.Thread
         threading.Thread.__init__(self, name=self.__class__.__name__)
         # Initialize TrapEventDispatcher
+        self._config = config
         self._trap_event_dispatcher = TrapEventDispatcher(config)
         self._run = False
         self._events = deque()
@@ -34,17 +35,22 @@ class TrapEventDispatcherThread(threading.Thread):
         log.debug("%s: Started" % (self.name))
         self._run = True
         while self._run:
-            while True:
-                try:
-                    # pop event off queue
-                    event = self._events.popleft()
-                    # attempt to dispatch event
-                    if not self._trap_event_dispatcher.dispatch(event):
-                        # dispatch failed. put the event back on the queue
-                        self._events.appendleft(event)
-                except IndexError:
-                    # Nothing in queue
-                    break 
+            try:
+                # pop event off queue
+                event = self._events.popleft()
+                # attempt to dispatch event
+                if not self._trap_event_dispatcher.dispatch(event):
+                    # dispatch failed. put the event back on the queue
+                    self._events.appendleft(event)
+
+                    # back off
+                    log.debug("TrapDispatcherThread: back off for %d seconds" % (self._config['dispatcher']['backoff']))
+                    time.sleep(self._config['dispatcher']['backoff'])
+
+            except IndexError:
+                # Nothing in queue
+                pass 
+
             time.sleep(1)
         log.debug("%s: Exiting" % (self.name))
 
@@ -97,9 +103,6 @@ class TrapEventDispatcher(object):
             if self._socket is None:
                 log.debug("TrapEventDispatcher: Socket is not connected. Reconnecting")
                 self._connect()
-
-                # back off
-                time.sleep(self._config['dispatcher']['backoff'])
 
             if self._socket is not None:
                 # Send event
