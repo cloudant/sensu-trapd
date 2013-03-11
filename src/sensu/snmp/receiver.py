@@ -32,6 +32,9 @@ class TrapReceiverThread(threading.Thread):
 
 class TrapReceiver(object):
 
+    SNMPV3_AUTH_PROTOCOLS = {"MD5": pysnmp.entity.config.usmHMACMD5AuthProtocol}
+    SNMPV3_PRIV_PROTOCOLS = {"DES": pysnmp.entity.config.usmDESPrivProtocol, "none": None}
+
     def __init__(self, config, mibs, callback):
         self._config = config
         self._mibs = mibs
@@ -57,7 +60,7 @@ class TrapReceiver(object):
         # Configure SNMPv3 if enabled
         if bool(self._config['snmp']['auth']['version3']['enabled']):
             # TODO: configure SNMPv3 users from config file
-            self._configure_snmp_v3('authkey1', 'privkey1')
+            self._configure_snmp_v3(self._config['snmp']['auth']['version3']['users'])
 
         LOG.debug("TrapReceiver: Initialized")
 
@@ -71,13 +74,25 @@ class TrapReceiver(object):
         pysnmp.entity.config.addV1System(self._snmp_engine, 'sensu-trapd-agent', community)
         LOG.debug("TrapReceiver: Initialized SNMPv1 Auth")
 
-    def _configure_snmp_v3(self, authkey, privkey):
-        # SNMPv3/USM setup
-        # user: usr-md5-des, auth: MD5, priv DES
-        pysnmp.entity.config.addV3User(
-            self._snmp_engine, 'usr-md5-des',
-            pysnmp.entity.config.usmHMACMD5AuthProtocol, authkey,
-            pysnmp.entity.config.usmDESPrivProtocol, privkey)
+    def _configure_snmp_v3(self, users):
+        # configure snmp v3 users
+        for user in users:
+            auth = users[user]['authentication']
+            priv = users[user]['privacy']
+
+            auth_protocol = self.SNMPV3_AUTH_PROTOCOLS[auth['protocol']]
+            priv_protocol = self.SNMPV3_PRIV_PROTOCOLS[priv['protocol']]
+
+            if priv_protocol:
+                pysnmp.entity.config.addV3User(self._snmp_engine, user,
+                    auth_protocol, auth['password'],
+                    priv_protocol, priv['password'])
+                LOG.debug("TrapReceiver: Added SNMPv3 user: %s auth: %s, priv: %s" % (user, auth['protocol'], priv['protocol']))
+            else:
+                pysnmp.entity.config.addV3User(self._snmp_engine, user,
+                    auth_protocol, auth['password'])
+                LOG.debug("TrapReceiver: Added SNMPv3 user: %s auth: %s, priv: none" % (user, auth['protocol']))
+
         LOG.debug("TrapReceiver: Initialized SNMPv3 Auth")
 
     def _create_trap(self, trap_oid, trap_arguments, trap_properties):

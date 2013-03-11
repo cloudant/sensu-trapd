@@ -8,11 +8,12 @@
         "trap_file":    "conf/traps.json"
     },
     "dispatcher": {
-        "host":         "localhost",
-        "port":         3030,
-        "timeout":      5,
-        "backoff":      60,
-        "events_log":   "sensu-trapd-events.log"
+        "host":             "localhost",
+        "port":             3030,
+        "timeout":          5,
+        "backoff":          60,
+        "check_response":   false,
+        "events_log":       "sensu-trapd-events.log"
     },
     "mibs": {
         "paths": ["conf/mibs"],
@@ -39,6 +40,25 @@
             "version3": {
                 "enabled":      true,
                 "users": {
+                    "test-user": {
+                        "authentication": {
+                            "protocol": "MD5",
+                            "password": "myAuthSecret"
+                        },
+                        "privacy": {
+                            "protocol": "DES",
+                            "password": "myPrivSecret"
+                        }
+                    },
+                    "test-user-nopriv": {
+                        "authentication": {
+                            "protocol": "MD5",
+                            "password": "myAuthSecret"
+                        },
+                        "privacy": {
+                            "protocol": "none"
+                        }
+                    }
                 }
             }
         }

@@ -105,20 +105,21 @@ class TrapEventDispatcher(object):
                 # Send event
                 self._socket.sendall(event.to_json())
 
-                # Receive event confirmation
-                self._socket.setblocking(0)
-                timer = int(time.time())
-                data = ""
-                while (int(time.time()) - timer) < self._socket_timeout:
-                    try:
-                        data = self._socket.recv(512)
-                        break
-                    except socket.error, e:
-                        pass
-                self._socket.setblocking(1)
-                if len(data) <= 0 or data.strip() != "ok":
-                    log.error("TrapEventDispatcher: Error dispatching event. Response was: %s" % (data))
-                    return False
+                if self._config['dispatcher']['check_response']:
+                    # Receive event confirmation
+                    self._socket.setblocking(0)
+                    timer = int(time.time())
+                    data = ""
+                    while (int(time.time()) - timer) < self._socket_timeout:
+                        try:
+                            data = self._socket.recv(512)
+                            break
+                        except socket.error, e:
+                            pass
+                    self._socket.setblocking(1)
+                    if len(data) <= 0 or data.strip() != "ok":
+                        log.error("TrapEventDispatcher: Error dispatching event. Response was: %s" % (data))
+                        return False
 
                 # TODO: send event!
                 log.info("TrapEventDispatcher: Dispatched TrapEvent: %r" % (event))
