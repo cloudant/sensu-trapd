@@ -73,6 +73,10 @@ class TrapReceiver(object):
             udp.UdpTransport().openServerMode((listen_address, listen_port)))
         LOG.info("TrapReceiver: Initialized SNMP UDP Transport on %s:%s" % (listen_address, listen_port))
 
+    def _configure_tcp_transport(self, listen_address, listen_port):
+        #LOG.info("TrapReceiver: Initialized SNMP TCP Transport on %s:%s" % (listen_address, listen_port))
+        pass
+
     def _configure_snmp_v2(self, community):
         # v1/2 setup
         pysnmp.entity.config.addV1System(self._snmp_engine, 'sensu-trapd-agent', community)
@@ -88,13 +92,20 @@ class TrapReceiver(object):
             priv_protocol = self.SNMPV3_PRIV_PROTOCOLS[priv['protocol']]
 
             if priv_protocol:
-                pysnmp.entity.config.addV3User(self._snmp_engine, user,
-                    auth_protocol, auth['password'],
-                    priv_protocol, priv['password'])
+                pysnmp.entity.config.addV3User(self._snmp_engine,
+                    user,
+                    auth_protocol,
+                    auth['password'],
+                    priv_protocol,
+                    priv['password'])
+
                 LOG.debug("TrapReceiver: Added SNMPv3 user: %s auth: %s, priv: %s" % (user, auth['protocol'], priv['protocol']))
             else:
-                pysnmp.entity.config.addV3User(self._snmp_engine, user,
-                    auth_protocol, auth['password'])
+                pysnmp.entity.config.addV3User(self._snmp_engine,
+                    user,
+                    auth_protocol,
+                    auth['password'])
+
                 LOG.debug("TrapReceiver: Added SNMPv3 user: %s auth: %s, priv: none" % (user, auth['protocol']))
 
         LOG.debug("TrapReceiver: Initialized SNMPv3 Auth")

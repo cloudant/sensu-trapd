@@ -117,7 +117,7 @@ class SensuTrapServer(object):
         self._trap_event_dispatcher_thread.stop()
 
     def run(self):
-        LOG.debug("SensuTrapServer: started")
+        LOG.debug("SensuTrapServer: Started")
         self._run = True
 
         # Start TrapReceiverThread
@@ -132,4 +132,4 @@ class SensuTrapServer(object):
         # Wait for our threads to stop
         self._trap_receiver_thread.join()
         self._trap_event_dispatcher_thread.join()
-        LOG.debug("SensuTrapServer: exiting")
+        LOG.debug("SensuTrapServer: Exiting")
