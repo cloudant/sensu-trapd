@@ -11,8 +11,6 @@
         "host":             "localhost",
         "port":             3030,
         "timeout":          5,
-        "backoff":          30,
-        "check_response":   false,
         "events_log":       "sensu-trapd-events.log"
     },
     "mibs": {

@@ -14,6 +14,7 @@ import simplejson as json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../lib')))
 
+from sensu.snmp.config import load_config
 from sensu.snmp.log import log, configure_log
 from sensu.snmp.log import events_log, configure_events_log
 from sensu.snmp.server import SensuTrapServer
@@ -53,17 +54,17 @@ if __name__ == "__main__":
         # Parse Command Line Args
         (options, args) = parser.parse_args()
 
-        # Load Config
-        if options.configfile is None:
-            print >> sys.stderr, ("ERROR: Must specify a config file")
-            sys.exit(1)
-        fh = open(options.configfile)
-        config = json.load(fh)
-
         # Display Version
         if options.version:
             print "version %s" % (get_version())
             sys.exit(0)
+
+        # Load Config
+        if options.configfile is None:
+            print >> sys.stderr, ("ERROR: Must specify a config file")
+            sys.exit(1)
+
+        config = load_config(options.configfile)
 
         # Configure Log Level
         if options.log_level:

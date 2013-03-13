@@ -34,24 +34,32 @@ class TrapEventDispatcherThread(threading.Thread):
     def run(self):
         log.debug("%s: Started" % (self.name))
         self._run = True
+        backoff = 0
         while self._run:
-            try:
-                # pop event off queue
-                event = self._events.popleft()
-                # attempt to dispatch event
-                if not self._trap_event_dispatcher.dispatch(event):
-                    # dispatch failed. put the event back on the queue
-                    self._events.appendleft(event)
+            if backoff <= 0:
+                try:
+                    # pop event off queue
+                    event = self._events.popleft()
 
-                    # back off
-                    log.debug("TrapDispatcherThread: back off for %d seconds" % (self._config['dispatcher']['backoff']))
-                    time.sleep(self._config['dispatcher']['backoff'])
+                    # attempt to dispatch event
+                    if not self._trap_event_dispatcher.dispatch(event):
+                        # dispatch failed. put the event back on the queue
+                        self._events.appendleft(event)
 
-            except IndexError:
-                # Nothing in queue
-                pass 
+                        # back off
+                        backoff = int(self._config['dispatcher']['backoff'])
+
+                        log.debug("TrapDispatcherThread: back off for %d seconds" % (backoff))
+
+                except IndexError:
+                    # Nothing in queue
+                    pass
+
+            else:
+                backoff = backoff - 1
 
             time.sleep(1)
+
         log.debug("%s: Exiting" % (self.name))
 
 class TrapEventDispatcher(object):
@@ -98,6 +106,8 @@ class TrapEventDispatcher(object):
         self._socket = None
 
     def dispatch(self, event):
+        # TODO: send event!
+        log.debug("TrapEventDispatcher: Dispatching TrapEvent: %r" % (event))
         try:
             # try to (re)connect
             if self._socket is None:
