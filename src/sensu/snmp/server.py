@@ -98,6 +98,7 @@ class SensuTrapServer(object):
         trap_handler = None
         for trap_handler_id, th in self._trap_handlers.items():
             if th.handles(trap):
+                LOG.info("SensuTrapServer: %s handling trap %r" % (trap_handler_id, trap))
                 # Transform Trap
                 trap_event = th.transform(trap)
                 # Dispatch TrapEvent
