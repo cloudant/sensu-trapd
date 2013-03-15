@@ -17,7 +17,8 @@
         "paths": ["conf/mibs"],
         "mibs":  ["CLOUDANT-REG-MIB",
                   "CLOUDANT-PLATFORM-MIB",
-                  "CLOUDANT-DBCORE-MIB"]
+                  "CLOUDANT-DBCORE-MIB",
+                  "CLOUDANT-LOADBALANCER-MIB"]
     },
     "snmp": {
         "transport": {
