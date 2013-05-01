@@ -1,6 +1,4 @@
-import os
-import sys
-import simplejson as json
+import json
 
 
 class TrapEvent(object):
@@ -14,7 +12,10 @@ class TrapEvent(object):
         self.handlers = handlers
 
     def to_json(self):
-        return json.dumps({'name':self.name, 'output': self.output, 'status': self.status, 'handlers': self.handlers})
+        return json.dumps({'name': self.name,
+                           'output': self.output,
+                           'status': self.status,
+                           'handlers': self.handlers})
 
     def __repr__(self):
         return "<TrapEvent name:'%s' >" % (self.name)

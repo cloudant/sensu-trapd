@@ -5,11 +5,7 @@ import sys
 import optparse
 import pwd
 import grp
-import ConfigParser
-import logging
-import logging.handlers
 import signal
-import simplejson as json
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../lib')))
