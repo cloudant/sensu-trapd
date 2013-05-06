@@ -15,13 +15,13 @@ pysnmp >= 4.2.4
 # Installation
 * * *
 
-sensu-trapd can be installed from source using its Makefile:
+Sensu-trapd can be installed from source using its Makefile:
 
 ```
 make install
 ```
 
-sensu-trapd can also be packaged to deb's (and hopefully RPMs at some point):
+Sensu-trapd can also be packaged to deb's (and hopefully RPMs at some point):
 
 ```
 make deb
@@ -34,10 +34,10 @@ For more installation information see the Makefile.
 
 ### Converting MIBs for PySNMP
 
-For sensu-trapd to understand a trap, it must have a corresponding MIB defining
+For sensu-trapd to translate a trap, it must have a corresponding MIB defining
 that trap loaded. PySNMP (which sensu-trapd uses as a trap receiver), requires
-that MIBs be converted into a special format before being loaded into 
-sensu-trapd. Fortunately, PySNMP provides a utility to do this.
+that MIBs be converted into a special format before being loaded into
+sensu-trapd. Fortunately, PySNMP provides a utility to do this:
 
 Note: Make you have PySNMP installed, and the "build-pysnmp-mib" is in your path.
 
@@ -46,8 +46,8 @@ build-pysnmp-mib -o /some/destination/path/CLOUDANT-CLOUSEAU-MIB.py /some/source
 ```
 
 These MIBs will be automatically loaded by sensu-trapd if they are put into
-a directory listed in the sensu config file under the mibs/paths section, and
-in the mibs/mibs section.
+a directory listed in the sensu-trapd config file under the mibs/paths section,
+and also in the in the mibs/mibs section (See Example Configuration).
 
 ### Configuring Daemon
 
@@ -58,7 +58,6 @@ configuration can be specified on the command line. See the help for more info.
 
 Traps are configured using the conf/traps.json (unless another file is specified
 in conf/config.json).
-
 
 ### Basic Trap Configuration
 ```
@@ -79,16 +78,19 @@ in conf/config.json).
 }
 ```
 
-In the example above, we've configured sensu-trapd to handle the
-SOME-AWESOME-MIB::someTrapObject trap. This trap has two trap arguments, that
-get mapped to "first" and "second". These mappings can then be used for
+In the example above, I've configured sensu-trapd to handle the
+SOME-AWESOME-MIB::someTrapObject trap. This trap has two trap arguments that
+get mapped to names "first" and "second". These mappings can then be used for
 substitutions in the event that it sent to Sensu.
 
 In the event section of the trap configuration, you must specific a check name.
-This will be used by Sensu as the name of the check, so make it meaningful. 
+This will be used by Sensu as the name of the check, so make it meaningful.
 
 Additionally, you can specify the output of the check, handlers, and severity of
-the event.
+the event. 
+
+Note: If a trap as optional arguments, you must specify a trap handler for
+each trap both with and without arguments.
 
 ### Example Basic Trap Configuration
 ```
@@ -145,8 +147,7 @@ trap is received.
 }
 ```
 
-
-### Example Configuration File
+### Example Configuration
 ```
 {
     "daemon": {
