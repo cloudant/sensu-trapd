@@ -1,6 +1,6 @@
-
 from sensu.snmp.event import TrapEvent
 from sensu.snmp.log import log
+
 
 class TrapHandler(object):
 
@@ -31,11 +31,11 @@ class TrapHandler(object):
         substitutions['oid'] = str(trap.oid)
 
         # build substitution list from trap properties
-        for k,v in trap.properties.items():
+        for k, v in trap.properties.items():
             substitutions[k] = str(v)
 
         # build substitution list from trap arguments
-        for trap_arg_type_oid,token in self.trap_args.items():
+        for trap_arg_type_oid, token in self.trap_args.items():
             if trap_arg_type_oid in trap.arguments:
                 substitutions[token] = str(trap.arguments[trap_arg_type_oid])
 
