@@ -7,6 +7,8 @@ sensu-trapd is a SNMP trap receiver that translates SNMP traps to Sensu events.
 It is designed to listen for SNMP traps and dispatch Sensu events based on a
 preconfigured set of mappings (see Configuration).
 
+[![Build Status](https://travis-ci.org/cloudant/sensu-trapd.png)](https://travis-ci.org/cloudant/sensu-trapd)
+
 # Requirements
 * * *
 
