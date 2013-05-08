@@ -5,7 +5,7 @@ python:
 
 # install required packages
 before_install:
- - sudo apt-get install -qq dch
+ - sudo apt-get install -qq devscripts 
 
 
 # install dependencies
