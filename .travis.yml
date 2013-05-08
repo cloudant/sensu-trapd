@@ -5,7 +5,9 @@ python:
 
 # install required packages
 before_install:
- - sudo apt-get install -qq devscripts 
+ - sudo apt-get install -qq devscripts
+ - sudo apt-get install -qq python-support
+ - sudo apt-get install -qq python-mock
 
 
 # install dependencies
@@ -13,7 +15,7 @@ install:
   - "pip install -r requirements.txt --use-mirrors"
 
 # run 
-script: make deb 
+script: make deb
 
 # setup notifications
 notifications:
