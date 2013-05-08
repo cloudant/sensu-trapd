@@ -3,6 +3,7 @@ include         README.md
 include         MANIFEST.in
 include         version.txt
 include         .keep
+include         requirements.txt
 graft           src/bin
 graft           debian
 graft           conf
